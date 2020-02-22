@@ -1,6 +1,7 @@
 package com.sapient.football;
 
 import static org.hamcrest.CoreMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
@@ -26,7 +27,7 @@ class FootballServiceTest {
 	@Mock
 	private RestTemplate restTemplate;
 	
-	List<LinkedHashMap<Object, Object>> abc;
+	List<LinkedHashMap<Object, Object>> abc = new ArrayList<>();
 	
 
 	@BeforeEach
@@ -37,9 +38,10 @@ class FootballServiceTest {
 		country.setCountry_id("1234");
 		country.setCountry_name("INDIA");
 		countryList.add(country);
-		LinkedHashMap<Object, Object> abc = new LinkedHashMap<>();;
-		abc.put(HttpStatus.OK, countryList);
-		
+		LinkedHashMap<Object, Object> link = new LinkedHashMap<>();
+		link.put("country_id", "1234");
+		link.put("country_name", "INDIA");
+		abc.add(link);
 		MockitoAnnotations.initMocks(this);
 	}
 
@@ -50,6 +52,9 @@ class FootballServiceTest {
 		when(restTemplate.getForEntity("https://apiv2.apifootball.com/?action=get_countries&APIkey="+apikey, Object.class)).thenReturn(valuesList);
 		List<Country> countryList = footBallService.countryList(apikey);
 		assertNotNull(countryList);
+		assertEquals(countryList.get(0).getCountry_id(), "1234");
+		assertEquals(countryList.get(0).getCountry_name(), "INDIA");
+
 	}
 
 }
